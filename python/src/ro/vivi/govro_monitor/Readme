@@ -1,0 +1,56 @@
+Maria Mateescu
+
+The update goes in two steps:
+
+Step 1. Parsing the html file containing the members of the cabinet:
+Input: 
+- The html file, usually http://www.gov.ro/cabinet__c7l1p1.html
+- The name of the output file, usually cabinet_dd_mm_yyyy_from_web.txt
+
+From the html file we produce a text file formatted as:
+dd.mm.yyyy
+Minister 1
+Ministru 1
+Minister 2
+Ministru 2
+....
+
+Step 2. Updating DB information.
+Input:
+- a parsed file with output as above. The name of the file should contain a date.
+- the name of the db. 
+Constraints:
+- the updates must come in chronological order.
+- all files represent the complete list of the cabinet at that time. 
+
+
+Merges the information from the file parsed from the web with the information in the data base.
+
+The database contains one important table: | Ministru | Minister | StartDate | EndDate |
+EndDate might be empty, meaning that the guy is still there. 
+We also need to store the date at which our database was last updated.
+
+a) Check that date of the web file is newer than date of the DB. 
+b) Load elements of the parsed web file in an array with entries <Minister, Ministru>
+c) For all <Minister,Ministru> from the web 
+           if DB knows Minister at current date
+                 if DB knows that <Minister, Ministru> at that date, do nothing
+                 else mark end of previous <Minister, Ministru> in DB
+                      add new <Minister, Ministru> to DB with StartDate the current date. 
+           if DB doesn't know Minister at current date 
+                 add <Minister, Ministru> to DB with StartDate the current date. 
+   For all <Minister, Ministru> from the DB with empty EndDate (still running)
+           if Web file doesn't mention that Minister
+                  mark end date of that <Minister, Ministru>
+           
+
+
+
+
+Problems:
+- What if a Minister changes name
+- What if a Ministru name changes spelling?
+- What if webpage formatting changes? Trigger error is number of ministrii parsed is outside an interval 9.
+
+Adding features:
+- Previous cabinets can be introduced manually in archive files such as the one produced in step one and loaded directly by step 2. 
